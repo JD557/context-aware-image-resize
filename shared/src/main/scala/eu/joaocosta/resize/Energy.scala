@@ -4,16 +4,16 @@ import eu.joaocosta.minart.core.Color
 import eu.joaocosta.minart.extra.Image
 
 case class Energy(energies: Vector[Vector[Int]]) {
-  val width         = energies.headOption.map(_.size).getOrElse(0)
-  val height        = energies.size
-  lazy val maxValue = math.ceil(math.sqrt(Math.fastSquare(255) * 6))
+  val width  = energies.headOption.map(_.size).getOrElse(0)
+  val height = energies.size
   def toImage: Image = Image(energies.map(_.map { e =>
-    val intensity = (255 * e / maxValue).toInt
+    val intensity = (255 * e) / Energy.maxValue
     Color(intensity, intensity, intensity).argb
   }.toArray))
 }
 
 object Energy {
+  final val maxValue = math.ceil(math.sqrt(Math.fastSquare(255) * 6)).toInt
   def fromImage(image: Image): Energy = {
     val xRange = (0 until image.width)
     Energy(image.pixels.map { case line =>

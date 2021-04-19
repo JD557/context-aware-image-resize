@@ -40,11 +40,13 @@ object Main {
         val targetWidth  = (image.width * arguments.width).toInt
         val targetHeight = (image.height * arguments.height).toInt
         println("Generating a " + targetWidth + " x " + targetHeight + " image")
-        println("Removing Columns...")
-        val newImage1 = removeNColumns(image, (image.width * arguments.width).toInt)
+        val widthDelta  = targetWidth - image.width
+        val heightDelta = targetHeight - image.height
+        println("Resizing Columns...")
+        val newImage1 = Resizer.resizeColumns(image, widthDelta)
         println("Done")
-        println("Removing Lines...")
-        val newImage2 = removeNLines(newImage1, (image.height * arguments.height).toInt)
+        println("Resizing Lines...")
+        val newImage2 = Resizer.resizeLines(newImage1, heightDelta)
         println("Done")
 
         RenderLoop
