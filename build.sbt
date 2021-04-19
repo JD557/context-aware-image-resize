@@ -7,19 +7,15 @@ version := "1.0"
 scalaVersion := "2.13.4"
 
 lazy val resize = 
-  crossProject(JVMPlatform, JSPlatform, NativePlatform)
+  crossProject(JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(Seq(
     scalaVersion := "2.13.4",
     libraryDependencies ++= List(
       "eu.joaocosta"      %%% "minart-core"    % "0.2.2",
-      "eu.joaocosta"      %%% "minart-pure"    % "0.2.2",
-      "eu.joaocosta"      %%% "minart-extra"   % "0.2.2-SNAPSHOT"
+      "eu.joaocosta"      %%% "minart-pure"    % "0.2.2"
     ),
     scalafmtOnCompile := true
-  ))
-  .jsSettings(Seq(
-    scalaJSUseMainModuleInitializer := true
   ))
   .nativeSettings(Seq(
     nativeLinkStubs := true,

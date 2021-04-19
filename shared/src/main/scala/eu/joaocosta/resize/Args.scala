@@ -10,7 +10,7 @@ case class Args(
 
 object Args {
   def parse(args: Array[String]): Either[String, Args] = {
-    val initialArgs = Args(0.5, 0.5, "")
+    val initialArgs = Args(1.0, 1.0, "")
     def aux(acc: Args, args: List[String]): Either[String, Args] = args match {
       case Nil => Right(acc)
       case "-w" :: width :: xs =>
