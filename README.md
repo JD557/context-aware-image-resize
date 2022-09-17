@@ -4,14 +4,16 @@ A toy implementation of the [Seam Carving algorithm](https://perso.crans.org/fre
 
 Supports both downscaling and upscaling (up to 2x).
 
-For simplicity, only PPM images are supported.
+Supports PPM, BMP and QOI images.
 
 Usage:
 
-`java -jar resize.jar [-w width] [-h height] <filename>`
+`java -jar resize.jar [-w width] [-h height] [-o output] <filename>`
 
 or
 
-`./resize [-w width] [-h height] <filename>`
+`./resize [-w width] [-h height] [-o output] <filename>`
 
 Where the width and height are a number between 0.0 and 2.0, representing how much to scale that size (e.g. `-w 0.5 -h 2.0` will resize a 640 x 480 image to 320 960).
+
+If the output is unspecified, the resized image will show up in a window.

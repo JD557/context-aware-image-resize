@@ -1,15 +1,14 @@
 package eu.joaocosta.resize
 
-import eu.joaocosta.minart.core.Color
-import eu.joaocosta.minart.extra.Image
+import eu.joaocosta.minart.graphics._
 
 case class SeamEnergy(seamEnergies: Array[Array[Int]]) {
   val width         = seamEnergies.headOption.map(_.size).getOrElse(0)
   val height        = seamEnergies.size
   lazy val maxValue = seamEnergies.map(_.max).max
-  def toImage: Image = Image(seamEnergies.toVector.map(_.map { e =>
+  def toImage: RamSurface = new RamSurface(seamEnergies.toVector.map(_.map { e =>
     val intensity = (255 * e / maxValue).toInt
-    Color(intensity, intensity, intensity).argb
+    Color(intensity, intensity, intensity)
   }))
 
   def minSeam: List[Int] = {

@@ -1,34 +1,11 @@
 package eu.joaocosta.resize
 
 import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.core._
-import eu.joaocosta.minart.extra._
+import eu.joaocosta.minart.runtime.Resource
+import eu.joaocosta.minart.graphics._
+import eu.joaocosta.minart.graphics.image.Image
 
 object Main {
-
-  def removeColumn(image: Image): Image = {
-    val energy     = Energy.fromImage(image)
-    val seamEnergy = SeamEnergy.fromEnergy(energy)
-    val seam       = seamEnergy.minSeam
-    val newPixels = image.pixels.zip(seam).map { case (line, pixelToRemove) =>
-      line.take(pixelToRemove) ++ line.drop(pixelToRemove + 1)
-    }
-    Image(newPixels)
-  }
-
-  def removeNColumns(image: Image, n: Int): Image = {
-    if (n <= 0) image
-    else removeNColumns(removeColumn(image), n - 1)
-  }
-
-  def transposeImage(image: Image): Image = {
-    val pixels = image.pixels.transpose.map(_.toArray)
-    Image(pixels)
-  }
-
-  def removeNLines(image: Image, n: Int): Image = {
-    transposeImage(removeNColumns(transposeImage(image), n))
-  }
 
   def main(args: Array[String]): Unit = {
     Args.parse(args) match {
@@ -36,7 +13,14 @@ object Main {
         println("Invalid arguments: " + error)
       case Right(arguments) =>
         println(arguments)
-        val image        = Image.loadPpmImage(ResourceLoader.default().loadResource(arguments.filename)).get
+        val inputResource = Resource(arguments.filename)
+        val image =
+          Args.getExtension(arguments.filename) match {
+            case "pgm" | "ppm" => Image.loadPpmImage(inputResource).get
+            case "bmp"         => Image.loadBmpImage(inputResource).get
+            case "qoi"         => Image.loadQoiImage(inputResource).get
+            case format        => throw new Exception("Unsupported input format:" + format)
+          }
         val targetWidth  = (image.width * arguments.width).toInt
         val targetHeight = (image.height * arguments.height).toInt
         println("Generating a " + targetWidth + " x " + targetHeight + " image")
@@ -49,16 +33,24 @@ object Main {
         val newImage2 = Resizer.resizeLines(newImage1, heightDelta)
         println("Done")
 
-        RenderLoop
-          .default()
-          .singleFrame(
-            CanvasManager.default(),
-            Canvas.Settings(targetWidth, targetHeight),
-            c => {
-              newImage2.render(0, 0).run(c)
-              c.redraw()
+        arguments.output match {
+          case Some(output) =>
+            val outputResource = Resource(output)
+            Args.getExtension(arguments.filename) match {
+              case "ppm"  => Image.storePpmImage(newImage2, outputResource).get
+              case "bmp"  => Image.storeBmpImage(newImage2, outputResource).get
+              case "qoi"  => Image.storeQoiImage(newImage2, outputResource).get
+              case format => throw new Exception("Unsupported output format:" + format)
             }
-          )
+          case None =>
+            println("No output specified, rendering output in a window")
+            ImpureRenderLoop
+              .singleFrame(canvas => {
+                canvas.blit(newImage2)(0, 0)
+                canvas.redraw()
+              })
+              .run(Canvas.Settings(targetWidth, targetHeight))
+        }
     }
   }
 }
