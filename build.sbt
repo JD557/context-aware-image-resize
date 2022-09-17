@@ -2,18 +2,17 @@ import sbtcrossproject.CrossPlugin.autoImport.{ crossProject, CrossType }
 
 name := "Context-Aware-Resize"
 
-version := "1.0"
+version := "1.1"
 
-scalaVersion := "2.13.4"
+scalaVersion := "3.2.0"
 
 lazy val resize = 
   crossProject(JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(Seq(
-    scalaVersion := "2.13.4",
+    scalaVersion := "3.2.0",
     libraryDependencies ++= List(
-      "eu.joaocosta"      %%% "minart-core"    % "0.2.2",
-      "eu.joaocosta"      %%% "minart-pure"    % "0.2.2"
+      "eu.joaocosta"      %%% "minart"    % "0.4.3"
     ),
     scalafmtOnCompile := true
   ))
