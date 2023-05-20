@@ -1,7 +1,7 @@
 package eu.joaocosta.resize
 
 import eu.joaocosta.minart.backend.defaults._
-import eu.joaocosta.minart.runtime.Resource
+import eu.joaocosta.minart.runtime._
 import eu.joaocosta.minart.graphics._
 import eu.joaocosta.minart.graphics.image.Image
 
@@ -44,12 +44,13 @@ object Main {
             }
           case None =>
             println("No output specified, rendering output in a window")
-            ImpureRenderLoop
-              .singleFrame(canvas => {
+            AppLoop
+              .statelessRenderLoop { (canvas: Canvas) =>
                 canvas.blit(newImage2)(0, 0)
                 canvas.redraw()
-              })
-              .run(Canvas.Settings(targetWidth, targetHeight))
+              }
+              .configure(Canvas.Settings(targetWidth, targetHeight), LoopFrequency.Never)
+              .run()
         }
     }
   }
